@@ -30,6 +30,7 @@ public class JwtProvider {
                 .signWith(getSecretKey())
                 .compact();
     }
+
     public Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey())

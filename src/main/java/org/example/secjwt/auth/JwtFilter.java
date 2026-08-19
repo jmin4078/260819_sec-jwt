@@ -24,21 +24,21 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        try {
-            // 토큰을 추출해서
-            String token = extractToken(request); // 헤더 또는 쿠키에서 추출
-            System.out.println("token = " + token);
-            // 추출한 정보를 바탕으로 AuthToken을 넘기는 역할
-            String username = extractUsername(token); // role
-            System.out.println("username = " + username);
-            SecurityContextHolder.getContext().setAuthentication(
-                    new UsernamePasswordAuthenticationToken(
-                            username, null,
-                            AuthorityUtils.createAuthorityList("ROLE_USER")));
-        } catch (Exception e) {
-            e.printStackTrace();
-            SecurityContextHolder.clearContext();
+        String token = extractToken(request); // 헤더 또는 쿠키에서 추출
+
+        if (StringUtils.hasText(token)) {
+            try {
+                // 추출한 정보를 바탕으로 AuthToken을 넘기는 역할
+                String username = extractUsername(token); // role
+                SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(
+                                username, null,
+                                AuthorityUtils.createAuthorityList("ROLE_USER")));
+            } catch (Exception e) {
+                SecurityContextHolder.clearContext();
+            }
         }
+
         filterChain.doFilter(request, response);
     }
 
